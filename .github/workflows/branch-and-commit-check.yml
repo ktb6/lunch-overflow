@@ -1,0 +1,40 @@
+name: Branch and Commit Message Check
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+
+      - name: Validate branch name
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          if ! [[ "$BRANCH_NAME" =~ ^(feature|bugfix|hotfix|release|develop)/[A-Z]+-[0-9]+.*$ ]]; then
+            echo "Error: Branch name must start with feature/, bugfix/, hotfix/, or release/ followed by Jira ticket (e.g., feature/PROJ-1234)."
+            exit 1
+          fi
+
+      - name: Validate commit messages
+        run: |
+          COMMITS=$(curl -s \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/commits" | \
+            jq -r '.[].commit.message')
+
+          IFS=$'\n'  # Set the internal field separator to handle each commit message as a whole
+          for COMMIT_MSG in $COMMITS; do
+            echo "Commit Message: $COMMIT_MSG"
+            if ! [[ "$COMMIT_MSG" =~ ^\[[A-Z]+-[0-9]+\] ]]; then
+              echo "Error: Commit message must start with a Jira ticket in the format '[PROJ-1234]'."
+              exit 1
+            fi
+          done
