@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: web
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+      - ai
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: server
+    ports:
+      - "4000:4000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+
+  ai:
+    build:
+      context: ./ai
+      dockerfile: Dockerfile
+    container_name: ai
+    ports:
+      - "5000:5000"
