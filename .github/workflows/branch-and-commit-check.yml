@@ -17,7 +17,8 @@ jobs:
 
       - name: Validate branch name
         run: |
-          if ! [[ "${{ github.ref }}" =~ ^refs/heads/(feature|bugfix|hotfix|release|develop)/[A-Z]+-[0-9]+.*$ ]]; then
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          if ! [[ "$BRANCH_NAME" =~ ^(feature|bugfix|hotfix|release|develop)/[A-Z]+-[0-9]+.*$ ]]; then
             echo "Error: Branch name must start with feature/, bugfix/, hotfix/, or release/ followed by Jira ticket (e.g., feature/PROJ-1234)."
             exit 1
           fi
