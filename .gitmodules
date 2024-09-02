@@ -1,0 +1,9 @@
+[submodule "web"]
+	path = web
+	url = git@github.com:ktb6/lunch-overflow-web.git
+[submodule "server"]
+	path = server
+	url = git@github.com:ktb6/lunch-overflow-server.git
+[submodule "ai"]
+	path = ai
+	url = git@github.com:ktb6/lunch-overflow-ai.git
