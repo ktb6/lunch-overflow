@@ -1,9 +1,6 @@
 name: Branch and Commit Message Check
 
 on:
-  push:
-    branches:
-      - "*"
   pull_request:
     branches:
       - "*"
